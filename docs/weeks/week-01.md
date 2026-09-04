@@ -1,9 +1,9 @@
 # Week 01：Python 工程基础与 Issue CLI
 
-- 周期：YYYY-MM-DD ～ YYYY-MM-DD
-- 状态：未开始
-- 对应 Issue：
-- 对应 PR：
+- 周期：2026-09-04 ～ 进行中
+- 状态：进行中（Day 1 已完成并批准合并）
+- 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
+- 对应 PR：[#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2)
 
 ## 本周目标
 
@@ -13,7 +13,7 @@
 
 ## 验收标准
 
-- [ ] Python 工程能够按 README 中的命令安装并运行。
+- [x] Python 工程能够按 README 中的命令安装并运行。
 - [ ] 使用 Pydantic 定义 Issue 的创建、更新与读取数据结构及校验规则。
 - [ ] Service 负责业务规则，Repository 负责 JSON 文件读写，两者职责清晰。
 - [ ] CLI 支持 `create`、`list`、`show`、`update`、`close` 命令。
@@ -21,13 +21,13 @@
 - [ ] 非法输入、未知 Issue ID 和文件读写异常都有明确行为。
 - [ ] 完成 12～15 个确定性测试，覆盖核心成功路径与失败路径。
 - [ ] 我能不看代码说明调用链、数据结构、持久化过程和主要失败点。
-- [ ] 本周新增的 AI 债务已记录，至少清理一项。
+- [x] 本周新增的 AI 债务已记录，至少清理一项。
 
 ## 完成的功能
 
 | 功能 | 状态 | 验证方式 | 相关提交/PR |
 |---|---|---|---|
-| Python 工程初始化 | 未开始 | 安装并运行测试 | |
+| Python 工程初始化 | 已完成 | `uv sync --locked` + 全部 Day 1 检查 | [`cb5ce97`](https://github.com/yuqiao-yq/devsupport-agent/commit/cb5ce97) / [#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2) |
 | Pydantic Issue Schemas | 未开始 | Schema 单元测试 | |
 | Service/Repository 分层 | 未开始 | Service 单元测试 | |
 | JSON 持久化 | 未开始 | 临时文件测试与重启验证 | |
@@ -77,10 +77,17 @@
 
 ### AI 实现了什么
 
-- 待填写：例如创建工程骨架、生成测试初稿或实现某个独立命令。
+- 安装 `uv`，并用它安装项目专用 Python 3.12.14。
+- 初始化 `backend/` 的 `src/` 包布局、依赖锁和质量工具配置。
+- 创建包入口、smoke test、后端 README、Day 1 SPEC 与工程 ADR。
+- 执行依赖同步、导入、格式、lint、类型和测试检查。
 
 ### 我重点审查了什么
 
+- [x] `pyproject.toml` 只包含 Day 1 需要的依赖和质量工具，没有提前引入框架。
+- [x] `.python-version`、`.venv` 和 `uv.lock` 的职责清晰。
+- [x] `devsupport_agent` 实际从 `backend/src/` 导入，而不是依赖临时 `PYTHONPATH`。
+- [x] smoke test 只证明包可被正确安装和导入，没有虚构业务行为。
 - [ ] CLI 只负责参数解析与结果展示，没有混入业务规则或直接操作 JSON。
 - [ ] Service 负责 Issue 的创建、查询、更新和关闭规则。
 - [ ] Repository 只处理数据存取，并能被测试替身替换。
@@ -91,16 +98,33 @@
 
 ### 我亲手验证或修改了什么
 
-- 待填写：说明具体文件、行为、修改原因和验证结果。
+- 学习者完成 Day 1 概念理解检查，确认理解项目 Python 隔离、依赖声明/锁定/安装三者关系、`src/` 布局以及三类质量工具的职责，并批准合并 PR #2。
 
 ## 测试计划与证据
 
 目标测试数量：12～15 个。不要只写“测试通过”，应保留可复现的命令与结果摘要。
 
 ```text
-# 执行命令
+# uv run python --version
+Python 3.12.14
 
-# 结果摘要（通过/失败数量、耗时）
+# uv lock --check
+锁文件有效
+
+# uv run python -c "import devsupport_agent; print(devsupport_agent.__file__)"
+backend/src/devsupport_agent/__init__.py
+
+# uv run ruff format --check .
+3 files already formatted
+
+# uv run ruff check .
+All checks passed!
+
+# uv run pyright
+0 errors, 0 warnings, 0 informations
+
+# uv run pytest -q
+1 passed
 ```
 
 | 测试层级 | 建议场景 | 预期结果 | 实际证据 |
@@ -122,7 +146,7 @@
 
 ## 本周架构决策
 
-- 待填写；例如为何让 Service 依赖 Repository 抽象、为何本周选择 JSON。需要长期保留的取舍应新增到 `docs/adr/`。
+- [ADR-0002：使用 uv、src 布局与 Pyright](../adr/0002-use-uv-src-layout-and-pyright.md)。
 
 ## 遇到的问题
 
@@ -132,7 +156,7 @@
 
 ## 尚未理解的内容
 
-- 待填写，并同步记录到 `docs/ai-debt.md`。
+- Day 1 的 AID-001、AID-002 已完成初步理解验收并移入已解决列表；周日复盘时再做一次无提示复述，验证记忆是否稳定。
 
 ## 本周复盘
 

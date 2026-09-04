@@ -31,7 +31,7 @@
 
 **目标：** 建立最小但规范的 Python 工程，用 JSON 存储和 CLI 跑通 Issue 核心用例。
 
-- [ ] 初始化 `backend/`，配置 Python、依赖管理、lint、类型检查和 pytest
+- [x] 初始化 `backend/`，配置 Python、依赖管理、lint、类型检查和 pytest
 - [ ] 使用 Pydantic 定义 `Issue`、优先级、状态与输入输出模型
 - [ ] 划分 Service 与 Repository 边界，CLI 不直接操作存储
 - [ ] 实现 JSON Repository，并明确序列化、文件不存在和损坏文件的行为
