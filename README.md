@@ -21,7 +21,7 @@
 
 | 能力 | 目标 | 当前状态 |
 |---|---|---|
-| Issue 工作流 | 创建、查询和更新 Issue，具备身份隔离与幂等保护 | 规划中 |
+| Issue 工作流 | 创建、查询和更新 Issue，具备身份隔离与幂等保护 | Schema 已实现 |
 | Agent Runtime | 手写有界循环与 Agents SDK 双引擎对照 | 规划中 |
 | 会话与记忆 | 隔离的会话状态、上下文管理与可控记忆 | 规划中 |
 | RAG | 文档导入、检索、引用与可重复评测 | 规划中 |
@@ -94,11 +94,11 @@ docs/              周记、规格、ADR、图示与 AI debt
 
 ## 质量证据
 
-当前尚未建立基线；下列指标会在对应阶段由固定数据集生成并链接到评测报告。
+当前已建立本地 Python 质量基线；CI、Agent 与评测指标会在对应阶段逐步补齐。
 
 | 指标 | 当前结果 | 目标证据 |
 |---|---:|---|
-| 后端测试 | 尚未运行 | CI 中的单元、API 与数据库测试 |
+| 后端测试 | 27 passed（Day 2 本地） | CI 中的单元、API 与数据库测试 |
 | 任务成功率 | 尚未评测 | 版本化 eval cases |
 | 工具选择准确率 | 尚未评测 | 确定性用例 + 真实模型抽样 |
 | 引用支持率 | 尚未评测 | 人工标注答案与引用 grader |
@@ -107,7 +107,7 @@ docs/              周记、规格、ADR、图示与 AI debt
 
 ## 快速开始
 
-> 当前初始化阶段还没有可运行应用。以下命令会在相应模块落地后替换为经过 CI 验证的真实步骤。
+> 当前已有可安装、可测试的后端包和 Issue Schema，但还没有 CLI、HTTP 服务或前端应用。
 
 ```bash
 git clone https://github.com/yuqiao-yq/devsupport-agent.git
@@ -116,14 +116,8 @@ cp .env.example .env
 
 # 后端（待 Week 01–04 落地）
 cd backend
-uv sync
+uv sync --locked
 uv run pytest
-uv run fastapi dev src/devsupport_agent/main.py
-
-# 前端（待 Week 04 落地）
-cd ../frontend
-pnpm install
-pnpm dev
 ```
 
 真实密钥只能写入本地 `.env` 或部署平台的密钥管理系统，不能提交到 Git。
@@ -175,8 +169,7 @@ pnpm dev
 
 ## 当前下一步
 
-- 建立 Python 项目、领域模型和测试入口；
-- 使用 Pydantic 定义 Issue 数据边界；
-- 通过 Service、Repository、JSON 存储与 CLI 跑通第一个 Issue 用例；
-- 记录首个规格与架构决策；
-- 用 CI 验证 lint、类型检查和 pytest。
+- 划分 Issue Service 与 Repository 边界；
+- 实现 JSON 存储以及创建、查询、列表、更新和关闭 CLI；
+- 补齐 Week 01 的失败路径与调用链说明；
+- 建立首个 CI 工作流，自动验证 lint、类型检查和 pytest。

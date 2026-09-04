@@ -1,6 +1,6 @@
 # SPEC-0003：Day 2 Issue 数据契约
 
-- 状态：Draft
+- 状态：Review（实现与自动检查完成，待学习者理解验收）
 - 日期：2026-09-04
 - 对应路线：Week 01 / Day 02
 - 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
@@ -17,6 +17,7 @@
 - 定义 `IssueCreate`、`IssueUpdate`、`IssueRead`。
 - 明确字段的必填性、默认值、长度、空白处理和额外字段行为。
 - 验证枚举、UUID、带时区时间和 JSON 兼容序列化。
+- 校验后的 Schema 作为不可直接赋值修改的值对象使用。
 - 使用确定性单元测试覆盖正常路径和失败路径。
 
 ## 非目标
@@ -48,7 +49,7 @@
 | `IssueRead` | `id` | 是 | 合法 UUID |
 |  | `title`、`description`、`priority` | 是 | 不使用创建输入的默认值掩盖缺失数据 |
 |  | `status` | 是 | 合法状态枚举 |
-|  | `created_at`、`updated_at` | 是 | 必须包含时区；`updated_at` 不早于 `created_at` |
+|  | `created_at`、`updated_at` | 是 | 只接受 datetime 或 ISO 8601 字符串，必须包含时区；拒绝隐式 Unix 时间戳；`updated_at` 不早于 `created_at` |
 
 所有 Schema 都拒绝未声明字段，避免字段拼写错误或调用方越权输入被静默忽略。
 
@@ -59,6 +60,7 @@
 - `null` 不表示“不修改”。显式传入 `null` 会被拒绝，防止调用方的错误输入被静默忽略。
 - `description=""` 是一个有效变更，表示主动清空描述。
 - Python 对象内部保留 UUID、datetime 和 Enum 类型；跨 JSON 边界时使用 `model_dump(mode="json")` 得到字符串值。
+- 校验后的模型被冻结，不能通过属性赋值绕过约束。后续 Service 合并更新后必须重新调用 `model_validate()`；不能把 `model_copy(update=...)` 当作不可信输入的校验入口。
 
 ## 失败与边界矩阵
 
@@ -72,18 +74,20 @@
 | 更新字段显式传入 `null` | 校验失败 |
 | 更新 description 为 `""` | 校验成功，表示清空描述 |
 | 读取模型的时间没有时区 | 校验失败 |
+| 读取模型的时间是 Unix 数字时间戳 | 校验失败，避免隐式转换掩盖输入格式错误 |
 | `updated_at` 早于 `created_at` | 校验失败 |
+| 校验后直接给字段重新赋值 | 校验失败，模型保持冻结 |
 
 ## 验收标准
 
-- [ ] 三个 Schema 与两个 Enum 符合字段契约。
-- [ ] 标题和描述会去除首尾空白，空白标题被拒绝。
-- [ ] 创建默认值明确且可通过测试证明。
-- [ ] 部分更新能区分字段省略、显式 `null` 和空字符串。
-- [ ] 系统字段不能通过创建或普通更新输入注入。
-- [ ] 读取输出能验证 UUID、状态、带时区时间及时间顺序。
-- [ ] `model_dump(mode="json")` 生成 JSON 兼容数据。
-- [ ] Schema 单元测试、Ruff、Pyright 与完整 pytest 均通过。
+- [x] 三个 Schema 与两个 Enum 符合字段契约。
+- [x] 标题和描述会去除首尾空白，空白标题被拒绝。
+- [x] 创建默认值明确且可通过测试证明。
+- [x] 部分更新能区分字段省略、显式 `null` 和空字符串。
+- [x] 系统字段不能通过创建或普通更新输入注入。
+- [x] 读取输出能验证 UUID、状态、带时区时间及时间顺序。
+- [x] `model_dump(mode="json")` 生成标准库可以编码的数据。
+- [x] Schema 单元测试、Ruff、Pyright 与完整 pytest 均通过。
 - [ ] 学习者能解释输入/输出模型分离、运行时校验和静态类型检查的区别。
 
 ## 测试计划
@@ -95,6 +99,20 @@
 | Schema 单元测试 | 合法、空和含 `null` 的部分更新 | 正确生成变更或拒绝 | 同上 |
 | Schema 单元测试 | 合法与非法读取数据 | 正确解析或拒绝 | 同上 |
 | Schema 单元测试 | JSON 模式序列化 | UUID、Enum、时间变为 JSON 字符串 | 同上 |
+
+## 代码导读
+
+| 代码概念 | 在本实现中的作用 |
+|---|---|
+| `Annotated[T, Field(...)]` | 在保留 Python 类型 `T` 的同时附加长度等运行时约束 |
+| `_IssueSchema` | 前导下划线表示包内部基类；集中配置拒绝额外字段、字符串 trim 和冻结模型 |
+| `Self` | 表示 validator 返回当前模型类型，而不是某个固定父类 |
+| `field_validator(mode="before")` | 在 Pydantic 自动转换之前拦截数字时间戳，并显式解析 ISO 时间 |
+| `model_validator(mode="after")` | 字段各自有效后，再检查空更新、显式 `null` 或两个时间的相互关系；成功时必须返回 `self` |
+| `model_fields_set` | 记录调用方实际提供了哪些字段，用来区分“省略”与默认的 `None` |
+| `model_dump(exclude_unset=True)` | 只导出本次更新实际提交的字段，供后续 Service 合并 |
+| `model_dump(mode="json")` | 把 UUID、datetime 和 Enum 转成 JSON 可编码值 |
+| `frozen=True` | 阻止校验后直接赋值；它不代表 `model_copy(update=...)` 会重新校验 |
 
 ## 需要本人理解的内容
 
@@ -111,10 +129,18 @@ AI 可以实现 Schema 与测试初稿、运行质量检查并解释行为。学
 
 ## 实现与验证证据
 
-- 首次失败测试：待记录。
-- Schema 测试：待记录。
-- Ruff：待记录。
-- Pyright：待记录。
-- 完整 pytest：待记录。
+- 首次失败测试：测试先运行，因 `devsupport_agent.issues` 尚不存在而产生预期的 `ModuleNotFoundError`。
+- Schema 测试：`uv run pytest -q tests/test_issue_schemas.py` → 26 passed。
+- Ruff format：6 files already formatted。
+- Ruff lint：All checks passed。
+- Pyright：0 errors，0 warnings。
+- 完整 pytest：27 passed。
 - 实现提交：待记录。
 - 理解验收：待完成。
+
+## 参考资料
+
+- [Pydantic Models](https://docs.pydantic.dev/latest/concepts/models/)
+- [Pydantic Fields](https://docs.pydantic.dev/latest/concepts/fields/)
+- [Pydantic Validators](https://docs.pydantic.dev/latest/concepts/validators/)
+- [Pydantic Serialization](https://docs.pydantic.dev/latest/concepts/serialization/)
