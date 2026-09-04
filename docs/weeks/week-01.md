@@ -1,8 +1,8 @@
 # Week 01：Python 工程基础与 Issue CLI
 
-- 周期：YYYY-MM-DD ～ YYYY-MM-DD
-- 状态：未开始
-- 对应 Issue：
+- 周期：2026-09-04 ～ 进行中
+- 状态：进行中（Day 1 工程验收已通过，理解检查待完成）
+- 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
 - 对应 PR：
 
 ## 本周目标
@@ -13,7 +13,7 @@
 
 ## 验收标准
 
-- [ ] Python 工程能够按 README 中的命令安装并运行。
+- [x] Python 工程能够按 README 中的命令安装并运行。
 - [ ] 使用 Pydantic 定义 Issue 的创建、更新与读取数据结构及校验规则。
 - [ ] Service 负责业务规则，Repository 负责 JSON 文件读写，两者职责清晰。
 - [ ] CLI 支持 `create`、`list`、`show`、`update`、`close` 命令。
@@ -27,7 +27,7 @@
 
 | 功能 | 状态 | 验证方式 | 相关提交/PR |
 |---|---|---|---|
-| Python 工程初始化 | 未开始 | 安装并运行测试 | |
+| Python 工程初始化 | 已完成 | `uv sync --locked` + 全部 Day 1 检查 | 待提交 |
 | Pydantic Issue Schemas | 未开始 | Schema 单元测试 | |
 | Service/Repository 分层 | 未开始 | Service 单元测试 | |
 | JSON 持久化 | 未开始 | 临时文件测试与重启验证 | |
@@ -77,10 +77,17 @@
 
 ### AI 实现了什么
 
-- 待填写：例如创建工程骨架、生成测试初稿或实现某个独立命令。
+- 安装 `uv`，并用它安装项目专用 Python 3.12.14。
+- 初始化 `backend/` 的 `src/` 包布局、依赖锁和质量工具配置。
+- 创建包入口、smoke test、后端 README、Day 1 SPEC 与工程 ADR。
+- 执行依赖同步、导入、格式、lint、类型和测试检查。
 
 ### 我重点审查了什么
 
+- [ ] `pyproject.toml` 只包含 Day 1 需要的依赖和质量工具，没有提前引入框架。
+- [ ] `.python-version`、`.venv` 和 `uv.lock` 的职责清晰。
+- [ ] `devsupport_agent` 实际从 `backend/src/` 导入，而不是依赖临时 `PYTHONPATH`。
+- [ ] smoke test 只证明包可被正确安装和导入，没有虚构业务行为。
 - [ ] CLI 只负责参数解析与结果展示，没有混入业务规则或直接操作 JSON。
 - [ ] Service 负责 Issue 的创建、查询、更新和关闭规则。
 - [ ] Repository 只处理数据存取，并能被测试替身替换。
@@ -98,9 +105,26 @@
 目标测试数量：12～15 个。不要只写“测试通过”，应保留可复现的命令与结果摘要。
 
 ```text
-# 执行命令
+# uv run python --version
+Python 3.12.14
 
-# 结果摘要（通过/失败数量、耗时）
+# uv lock --check
+锁文件有效
+
+# uv run python -c "import devsupport_agent; print(devsupport_agent.__file__)"
+backend/src/devsupport_agent/__init__.py
+
+# uv run ruff format --check .
+3 files already formatted
+
+# uv run ruff check .
+All checks passed!
+
+# uv run pyright
+0 errors, 0 warnings, 0 informations
+
+# uv run pytest -q
+1 passed
 ```
 
 | 测试层级 | 建议场景 | 预期结果 | 实际证据 |
@@ -132,7 +156,8 @@
 
 ## 尚未理解的内容
 
-- 待填写，并同步记录到 `docs/ai-debt.md`。
+- AID-001：需要由本人解释 `pyproject.toml`、`uv.lock` 与 `.venv` 的关系。
+- AID-002：需要由本人解释 `src/` 布局及 smoke test 的实际验证范围。
 
 ## 本周复盘
 

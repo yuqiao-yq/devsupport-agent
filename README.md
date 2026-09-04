@@ -118,7 +118,7 @@ cp .env.example .env
 cd backend
 uv sync
 uv run pytest
-uv run fastapi dev app/main.py
+uv run fastapi dev src/devsupport_agent/main.py
 
 # 前端（待 Week 04 落地）
 cd ../frontend
