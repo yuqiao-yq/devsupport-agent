@@ -1,6 +1,6 @@
 # SPEC-0002：Day 1 Python 工程基线
 
-- 状态：Implemented（工程验收已通过；本人理解检查待完成）
+- 状态：Verified
 - 日期：2026-09-04
 - 对应路线：Week 01 / Day 01
 - 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
@@ -56,4 +56,5 @@
 - Pyright：0 errors，0 warnings。
 - pytest：1 passed。
 - 实现提交：[`cb5ce97`](https://github.com/yuqiao-yq/devsupport-agent/commit/cb5ce97)。
-- Draft PR：[#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2)，等待本人理解检查后再合并。
+- 理解验收：学习者已确认理解核心关系，并于 2026-09-04 批准合并。
+- PR：[#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2)。

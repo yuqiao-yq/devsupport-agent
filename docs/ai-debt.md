@@ -13,8 +13,7 @@
 
 | ID | 日期 | 风险 | 不理解或未验证的内容 | 涉及文件/功能 | 解决标准 | 状态 |
 |---|---|---|---|---|---|---|
-| AID-001 | 2026-09-04 | Low | 尚未由本人解释 `pyproject.toml`、`uv.lock`、`.venv` 的关系 | Day 1 Python 工程 | 不看文档说清直接依赖、完整锁定和可重建环境的区别 | Open |
-| AID-002 | 2026-09-04 | Low | 尚未由本人验证 `src/` 布局为何能发现错误导入 | Python 包布局 | 能解释安装前后的导入路径，并指出 smoke test 验证了什么 | Open |
+| 暂无 | | | | | | |
 
 风险等级：`High` / `Medium` / `Low`。
 
@@ -22,7 +21,8 @@
 
 | ID | 解决日期 | 我现在的解释 | 验证方式 | 证据 |
 |---|---|---|---|---|
-| 待填写 | | | | |
+| AID-001 | 2026-09-04 | `pyproject.toml` 声明依赖意图，`uv.lock` 固定解析结果，`.venv` 是可重建的本地安装产物 | `uv lock --check`、`uv sync --locked`，学习者确认理解 | [Day 1 PR #2](https://github.com/yuqiao-yq/devsupport-agent/pull/2) |
+| AID-002 | 2026-09-04 | `src/` 布局让测试验证正确安装后的包，避免因源码恰好位于当前目录而误导性导入成功 | 检查 `devsupport_agent.__file__` 并运行 smoke test，学习者确认理解 | [Day 1 PR #2](https://github.com/yuqiao-yq/devsupport-agent/pull/2) |
 
 ## 清理检查
 

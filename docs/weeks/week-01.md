@@ -1,7 +1,7 @@
 # Week 01：Python 工程基础与 Issue CLI
 
 - 周期：2026-09-04 ～ 进行中
-- 状态：进行中（Day 1 工程验收已通过，理解检查待完成）
+- 状态：进行中（Day 1 已完成并批准合并）
 - 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
 - 对应 PR：[#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2)
 
@@ -21,7 +21,7 @@
 - [ ] 非法输入、未知 Issue ID 和文件读写异常都有明确行为。
 - [ ] 完成 12～15 个确定性测试，覆盖核心成功路径与失败路径。
 - [ ] 我能不看代码说明调用链、数据结构、持久化过程和主要失败点。
-- [ ] 本周新增的 AI 债务已记录，至少清理一项。
+- [x] 本周新增的 AI 债务已记录，至少清理一项。
 
 ## 完成的功能
 
@@ -84,10 +84,10 @@
 
 ### 我重点审查了什么
 
-- [ ] `pyproject.toml` 只包含 Day 1 需要的依赖和质量工具，没有提前引入框架。
-- [ ] `.python-version`、`.venv` 和 `uv.lock` 的职责清晰。
-- [ ] `devsupport_agent` 实际从 `backend/src/` 导入，而不是依赖临时 `PYTHONPATH`。
-- [ ] smoke test 只证明包可被正确安装和导入，没有虚构业务行为。
+- [x] `pyproject.toml` 只包含 Day 1 需要的依赖和质量工具，没有提前引入框架。
+- [x] `.python-version`、`.venv` 和 `uv.lock` 的职责清晰。
+- [x] `devsupport_agent` 实际从 `backend/src/` 导入，而不是依赖临时 `PYTHONPATH`。
+- [x] smoke test 只证明包可被正确安装和导入，没有虚构业务行为。
 - [ ] CLI 只负责参数解析与结果展示，没有混入业务规则或直接操作 JSON。
 - [ ] Service 负责 Issue 的创建、查询、更新和关闭规则。
 - [ ] Repository 只处理数据存取，并能被测试替身替换。
@@ -98,7 +98,7 @@
 
 ### 我亲手验证或修改了什么
 
-- 待填写：说明具体文件、行为、修改原因和验证结果。
+- 学习者完成 Day 1 概念理解检查，确认理解项目 Python 隔离、依赖声明/锁定/安装三者关系、`src/` 布局以及三类质量工具的职责，并批准合并 PR #2。
 
 ## 测试计划与证据
 
@@ -146,7 +146,7 @@ All checks passed!
 
 ## 本周架构决策
 
-- 待填写；例如为何让 Service 依赖 Repository 抽象、为何本周选择 JSON。需要长期保留的取舍应新增到 `docs/adr/`。
+- [ADR-0002：使用 uv、src 布局与 Pyright](../adr/0002-use-uv-src-layout-and-pyright.md)。
 
 ## 遇到的问题
 
@@ -156,8 +156,7 @@ All checks passed!
 
 ## 尚未理解的内容
 
-- AID-001：需要由本人解释 `pyproject.toml`、`uv.lock` 与 `.venv` 的关系。
-- AID-002：需要由本人解释 `src/` 布局及 smoke test 的实际验证范围。
+- Day 1 的 AID-001、AID-002 已完成初步理解验收并移入已解决列表；周日复盘时再做一次无提示复述，验证记忆是否稳定。
 
 ## 本周复盘
 
