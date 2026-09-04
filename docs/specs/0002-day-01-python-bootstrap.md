@@ -4,6 +4,7 @@
 - 日期：2026-09-04
 - 对应路线：Week 01 / Day 01
 - 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
+- 对应 PR：[#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2)
 
 ## 目标
 
@@ -54,4 +55,5 @@
 - Ruff lint：全部检查通过。
 - Pyright：0 errors，0 warnings。
 - pytest：1 passed。
-- 对应提交：完成 Day 1 后填写。
+- 实现提交：[`cb5ce97`](https://github.com/yuqiao-yq/devsupport-agent/commit/cb5ce97)。
+- Draft PR：[#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2)，等待本人理解检查后再合并。

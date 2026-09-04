@@ -3,7 +3,7 @@
 - 周期：2026-09-04 ～ 进行中
 - 状态：进行中（Day 1 工程验收已通过，理解检查待完成）
 - 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
-- 对应 PR：
+- 对应 PR：[#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2)
 
 ## 本周目标
 
@@ -27,7 +27,7 @@
 
 | 功能 | 状态 | 验证方式 | 相关提交/PR |
 |---|---|---|---|
-| Python 工程初始化 | 已完成 | `uv sync --locked` + 全部 Day 1 检查 | 待提交 |
+| Python 工程初始化 | 已完成 | `uv sync --locked` + 全部 Day 1 检查 | [`cb5ce97`](https://github.com/yuqiao-yq/devsupport-agent/commit/cb5ce97) / [#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2) |
 | Pydantic Issue Schemas | 未开始 | Schema 单元测试 | |
 | Service/Repository 分层 | 未开始 | Service 单元测试 | |
 | JSON 持久化 | 未开始 | 临时文件测试与重启验证 | |
