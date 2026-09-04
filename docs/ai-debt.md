@@ -13,7 +13,9 @@
 
 | ID | 日期 | 风险 | 不理解或未验证的内容 | 涉及文件/功能 | 解决标准 | 状态 |
 |---|---|---|---|---|---|---|
-| 暂无 | | | | | | |
+| AID-003 | 2026-09-04 | Medium | 为什么创建、部分更新和读取要使用不同 Schema，以及哪些字段必须由系统拥有 | `issues/schemas.py`、ADR-0003 | 能独立解释三个模型的数据方向；指出系统字段为何不能进入创建/普通更新；预测额外字段测试结果 | Open |
+| AID-004 | 2026-09-04 | Medium | `IssueUpdate` 中字段省略、显式 `null` 和空字符串的区别，以及 `model_fields_set` / `exclude_unset` 的作用 | `IssueUpdate` 与对应测试 | 能预测三种输入的结果；由学习者选择一个未覆盖边界并给出预期，再指示 AI 完成 red → green 验证 | Open |
+| AID-005 | 2026-09-04 | Medium | `frozen=True` 能防止什么，以及为什么 `model_copy(update=...)` 不能用于校验不可信更新 | `_IssueSchema`、ADR-0003 | 能解释冻结与重新校验的边界；指出后续 Service 应如何安全地产生更新后的完整模型 | Open |
 
 风险等级：`High` / `Medium` / `Low`。
 
