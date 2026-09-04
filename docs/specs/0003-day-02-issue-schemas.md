@@ -4,7 +4,7 @@
 - 日期：2026-09-04
 - 对应路线：Week 01 / Day 02
 - 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
-- 对应 PR：待创建
+- 对应 PR：[#3](https://github.com/yuqiao-yq/devsupport-agent/pull/3)
 
 ## 目标
 
@@ -135,7 +135,7 @@ AI 可以实现 Schema 与测试初稿、运行质量检查并解释行为。学
 - Ruff lint：All checks passed。
 - Pyright：0 errors，0 warnings。
 - 完整 pytest：27 passed。
-- 实现提交：待记录。
+- 实现提交：[`6c9c2ca`](https://github.com/yuqiao-yq/devsupport-agent/commit/6c9c2ca)。
 - 理解验收：待完成。
 
 ## 参考资料
