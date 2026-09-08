@@ -1,6 +1,6 @@
 # SPEC-0003：Day 2 Issue 数据契约
 
-- 状态：Review（实现与自动检查完成，待学习者理解验收）
+- 状态：Implementation Verified（本地技术验收完成；理解验收待 Week 01 复盘）
 - 日期：2026-09-04
 - 对应路线：Week 01 / Day 02
 - 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
@@ -89,6 +89,7 @@
 - [x] `model_dump(mode="json")` 生成标准库可以编码的数据。
 - [x] Schema 单元测试、Ruff、Pyright 与完整 pytest 均通过。
 - [ ] 学习者能解释输入/输出模型分离、运行时校验和静态类型检查的区别。
+- [x] 学习者已审阅逐题解释，并于 2026-09-08 明确批准提交和继续推进；尚未独立复述的内容保留在 AI Debt。
 
 ## 测试计划
 
@@ -125,18 +126,18 @@
 
 ## AI 实现边界
 
-AI 可以实现 Schema 与测试初稿、运行质量检查并解释行为。学习者负责确认字段契约，预测边界输入结果，并在合并前完成理解验收。
+AI 可以实现 Schema 与测试初稿、运行质量检查并解释行为。学习者负责确认字段契约和预测边界输入；若选择先合并继续推进，未完成项必须登记到 AI Debt 并在 Week 01 结束前复核。合并不等于已经掌握。
 
 ## 实现与验证证据
 
 - 首次失败测试：测试先运行，因 `devsupport_agent.issues` 尚不存在而产生预期的 `ModuleNotFoundError`。
-- Schema 测试：`uv run pytest -q tests/test_issue_schemas.py` → 26 passed。
+- Schema 测试：`uv run pytest -q tests/test_issue_schemas.py` → 27 passed。
 - Ruff format：6 files already formatted。
 - Ruff lint：All checks passed。
 - Pyright：0 errors，0 warnings。
-- 完整 pytest：27 passed。
+- 完整 pytest：28 passed。
 - 实现提交：[`6c9c2ca`](https://github.com/yuqiao-yq/devsupport-agent/commit/6c9c2ca)。
-- 理解验收：待完成。
+- 理解验收：学习者对“模型分离”的回答方向正确，随后审阅其余答案并批准推进；AID-003～005 仍需在 Week 01 复盘中无提示复述。
 
 ## 参考资料
 

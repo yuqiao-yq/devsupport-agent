@@ -37,6 +37,12 @@ def test_issue_create_normalizes_text_and_applies_defaults() -> None:
     assert issue.priority is IssuePriority.MEDIUM
 
 
+def test_issue_create_accepts_title_at_maximum_length() -> None:
+    issue = IssueCreate(title="x" * 200)
+
+    assert len(issue.title) == 200
+
+
 @pytest.mark.parametrize("title", ["", "   ", "x" * 201])
 def test_issue_create_rejects_invalid_title(title: str) -> None:
     with pytest.raises(ValidationError) as captured:

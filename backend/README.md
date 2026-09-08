@@ -36,7 +36,7 @@ Expected results:
 - Python is `3.12.x`.
 - The package path contains `backend/src/devsupport_agent/`.
 - Ruff and Pyright report no errors.
-- pytest reports 27 passing tests at the end of Day 2.
+- pytest reports 28 passing tests at the end of Day 2.
 
 ## Issue schema example
 
