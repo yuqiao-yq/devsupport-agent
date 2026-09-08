@@ -33,7 +33,8 @@
 
 - [x] 初始化 `backend/`，配置 Python、依赖管理、lint、类型检查和 pytest
 - [x] 使用 Pydantic 定义 `Issue`、优先级、状态与输入输出模型
-- [ ] 划分 Service 与 Repository 边界，CLI 不直接操作存储
+- [x] 划分 Service 与 Repository 边界，并用 create/get 证明可替换存储
+- [ ] 确保后续 CLI 只调用 Service，不直接操作存储
 - [ ] 实现 JSON Repository，并明确序列化、文件不存在和损坏文件的行为
 - [ ] 实现创建、查询和列表的 CLI 命令
 - [ ] 为正常输入、空标题、非法优先级、损坏 JSON 和不存在记录编写测试
