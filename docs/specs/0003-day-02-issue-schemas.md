@@ -1,6 +1,6 @@
 # SPEC-0003：Day 2 Issue 数据契约
 
-- 实现状态：Verified（本地技术检查通过；PR #3 待合并）
+- 实现状态：Verified（本地技术检查通过）
 - 理解状态：Pending（AID-003～005 Open，待 Week 01 复盘）
 - 日期：2026-09-04
 - 对应路线：Week 01 / Day 02
