@@ -11,3 +11,4 @@ This file records user-visible and architecture-level changes. Routine learning 
 - Security and AI-assisted development guardrails.
 - Reproducible Python 3.12 backend baseline with uv, Ruff, Pyright, and pytest.
 - Validated and immutable Issue create, partial-update, and read schemas.
+- Issue create/get service with an injectable Repository Protocol and in-memory adapter.

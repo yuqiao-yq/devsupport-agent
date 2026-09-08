@@ -2,7 +2,7 @@
 
 Python backend for the DevSupport Agent learning project.
 
-Day 1 established the engineering baseline. Day 2 adds the first business boundary: validated Issue create, partial-update, and read schemas.
+Day 1 established the engineering baseline. Day 2 added validated Issue schemas. Day 3 adds create/get application use cases behind a replaceable Repository Protocol.
 
 ## Prerequisite
 
@@ -36,7 +36,7 @@ Expected results:
 - Python is `3.12.x`.
 - The package path contains `backend/src/devsupport_agent/`.
 - Ruff and Pyright report no errors.
-- pytest reports 28 passing tests at the end of Day 2.
+- pytest reports 37 passing tests at the end of Day 3.
 
 ## Issue schema example
 
@@ -62,7 +62,23 @@ The three schemas represent different data directions:
 
 Validated schemas are frozen so later code cannot bypass constraints through normal attribute assignment. A future Service must rebuild and validate a complete model after applying an update; `model_copy(update=...)` is not a validation boundary.
 
-Schema validation does not create IDs, change status, find records, or write files. Those business and persistence responsibilities are introduced in later Week 1 steps.
+Schema validation does not create IDs, find records, or store data. `IssueService` now owns the create/get workflows and system fields; `IssueRepository` owns storage operations.
+
+## Service and Repository example
+
+```python
+from devsupport_agent.issues import InMemoryIssueRepository, IssueCreate, IssueService
+
+repository = InMemoryIssueRepository()
+service = IssueService(repository)
+
+created = service.create(IssueCreate(title="Login page fails"))
+found = service.get(created.id)
+
+assert found == created
+```
+
+The Service depends on the `IssueRepository` Protocol, not on `InMemoryIssueRepository`. The in-memory adapter can therefore be replaced by a future JSON adapter without changing the use-case interface.
 
 ## Current structure
 
@@ -76,9 +92,14 @@ backend/
 │       ├── __init__.py
 │       └── issues/
 │           ├── __init__.py
-│           └── schemas.py
+│           ├── errors.py
+│           ├── repository.py
+│           ├── schemas.py
+│           └── service.py
 └── tests/
+    ├── test_issue_repository_contract.py
     ├── test_issue_schemas.py
+    ├── test_issue_service.py
     └── test_smoke.py
 ```
 
@@ -89,4 +110,7 @@ backend/
 - `.python-version`: the Python line selected for this project.
 - `src/devsupport_agent/`: installable production package.
 - `src/devsupport_agent/issues/schemas.py`: Issue input/output contracts and validation rules.
+- `src/devsupport_agent/issues/service.py`: create/get use cases and system-field ownership.
+- `src/devsupport_agent/issues/repository.py`: storage Protocol and in-memory adapter.
+- `src/devsupport_agent/issues/errors.py`: stable not-found and duplicate-ID errors.
 - `tests/`: code that verifies externally observable behavior.

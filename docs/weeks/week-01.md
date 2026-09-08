@@ -1,9 +1,9 @@
 # Week 01：Python 工程基础与 Issue CLI
 
 - 周期：2026-09-04 ～ 进行中
-- 状态：进行中（Day 1 已合并；Day 2 已批准提交，理解债务留待复盘）
+- 状态：进行中（Day 1～2 已合并；Day 3 技术实现完成，待理解验收）
 - 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
-- 对应 PR：Day 1 [#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2)；Day 2 [#3](https://github.com/yuqiao-yq/devsupport-agent/pull/3)
+- 对应 PR：Day 1 [#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2)；Day 2 [#3](https://github.com/yuqiao-yq/devsupport-agent/pull/3)；Day 3 待创建
 
 ## 本周目标
 
@@ -15,7 +15,8 @@
 
 - [x] Python 工程能够按 README 中的命令安装并运行。
 - [x] 使用 Pydantic 定义 Issue 的创建、更新与读取数据结构及校验规则。
-- [ ] Service 负责业务规则，Repository 负责 JSON 文件读写，两者职责清晰。
+- [x] Service 负责业务用例并只依赖 Repository Protocol，两者边界清晰。
+- [ ] JSON Repository 负责文件读写，并通过共享 Repository 契约测试。
 - [ ] CLI 支持 `create`、`list`、`show`、`update`、`close` 命令。
 - [ ] 数据在程序退出并重新运行后仍可从 JSON 文件恢复。
 - [ ] 非法输入、未知 Issue ID 和文件读写异常都有明确行为。
@@ -29,12 +30,24 @@
 |---|---|---|---|
 | Python 工程初始化 | 已完成 | `uv sync --locked` + 全部 Day 1 检查 | [`cb5ce97`](https://github.com/yuqiao-yq/devsupport-agent/commit/cb5ce97) / [#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2) |
 | Pydantic Issue Schemas | 实现已完成，理解债务开放 | 27 条 Schema 测试 + 完整质量检查 | [`6c9c2ca`](https://github.com/yuqiao-yq/devsupport-agent/commit/6c9c2ca) / [#3](https://github.com/yuqiao-yq/devsupport-agent/pull/3) |
-| Service/Repository 分层 | 未开始 | Service 单元测试 | |
+| Service/Repository 分层 | 已实现 create/get，待理解验收 | 6 条 Service + 3 条 Repository contract tests | [SPEC-0004](../specs/0004-day-03-issue-service.md) |
 | JSON 持久化 | 未开始 | 临时文件测试与重启验证 | |
 | `create` / `list` / `show` | 未开始 | CLI 测试 | |
 | `update` / `close` | 未开始 | CLI 测试 | |
 
 ## 调用链与我的理解
+
+Day 3 当前已实现的调用链：
+
+```text
+IssueCreate / UUID
+→ IssueService：编排 create/get，生成系统字段，解释“未找到”
+→ IssueRepository Protocol：声明 add/get 存取端口
+→ InMemoryIssueRepository：使用字典实现端口
+→ IssueRead 或类型化错误
+```
+
+Week 01 完成后的目标调用链：
 
 ```text
 终端命令
@@ -84,6 +97,10 @@
 - 先编写 Day 2 SPEC，再用测试定义 Issue Schema 契约并保留一次预期失败。
 - 实现 `IssuePriority`、`IssueStatus`、`IssueCreate`、`IssueUpdate`、`IssueRead` 及 27 条 Schema 测试。
 - 新增 ADR-0003，记录为何分离创建、更新和读取 Schema。
+- 先编写 Day 3 SPEC，再用失败测试定义 Service/Repository 行为。
+- 实现 `IssueService.create/get`、`IssueRepository` Protocol、内存 adapter 和两个类型化错误。
+- 注入 UUID factory 与 clock，并新增可供未来 JSON adapter 复用的 Repository contract tests。
+- 根据独立审查移除对象身份假设，明确 Protocol 只保证签名、行为由契约测试保证。
 
 ### 我重点审查了什么
 
@@ -104,6 +121,7 @@
 - 学习者完成 Day 1 概念理解检查，确认理解项目 Python 隔离、依赖声明/锁定/安装三者关系、`src/` 布局以及三类质量工具的职责，并批准合并 PR #2。
 - Day 2：学习者对模型分离给出了方向正确的解释，审阅了 omitted / `null` / `""`、Service 边界和冻结模型的逐题答案，并于 2026-09-08 批准提交和继续推进。尚未独立复述的部分保留为 AID-003～005。
 - 学习者未从三个候选边界中指定一个；AI 如实记录后补充“标题恰好 200 字符应成功”的回归测试，没有将其记为学习者完成。
+- Day 3 待学习者完成：解释 Schema、Service、Repository 的职责，以及 Protocol、契约测试和依赖注入为什么需要同时存在。
 
 ## 测试计划与证据
 
@@ -120,7 +138,7 @@ Python 3.12.14
 backend/src/devsupport_agent/__init__.py
 
 # uv run ruff format --check .
-6 files already formatted
+11 files already formatted
 
 # uv run ruff check .
 All checks passed!
@@ -129,14 +147,15 @@ All checks passed!
 0 errors, 0 warnings, 0 informations
 
 # uv run pytest -q
-28 passed
+37 passed
 ```
 
 | 测试层级 | 建议场景 | 预期结果 | 实际证据 |
 |---|---|---|---|
 | Schema | 合法与非法的创建/更新/读取输入 | 正确解析或拒绝 | `uv run pytest -q tests/test_issue_schemas.py` → 27 passed |
-| Service | create/list/show/update/close | 业务行为正确 | |
-| Repository | JSON 保存后重新加载 | 数据保持一致 | |
+| Service | create/get、依赖调用、未知/重复 ID、无时区 clock | 业务行为正确且失败前不错误写入 | `uv run pytest -q tests/test_issue_service.py` → 6 passed |
+| Repository contract | add/get、未知 ID、重复 ID 不覆盖 | 每个 adapter 行为一致 | 当前 in-memory adapter → 3 passed |
+| Repository persistence | JSON 保存后重新加载 | 数据保持一致 | 待后续实现 |
 | CLI | 五个命令的关键路径 | 输出与退出状态符合约定 | |
 | 失败路径 | 未知 ID、损坏文件或写入失败 | 错误明确且不产生错误数据 | |
 
@@ -148,6 +167,9 @@ All checks passed!
 | 更新没有字段或显式传入 `null` | Pydantic 拒绝输入 | 空更新以及单独/混合 `null` 均按预期失败 | `test_issue_update_rejects_empty_or_null_changes` 稳定复现 |
 | 创建/更新尝试写入系统字段 | Pydantic 拒绝额外字段 | `status` 被拒绝 | create/update 两个测试稳定复现 |
 | 读取时间传入无时区字符串或 Unix 数字时间戳 | Pydantic 拒绝隐式或含糊时间 | 两类输入均按预期失败 | `test_issue_read_rejects_invalid_system_fields` 稳定复现 |
+| Service 查询未知 ID | 抛出包含目标 ID 的业务错误，不写入 | `IssueNotFoundError` | `test_get_raises_typed_error_for_unknown_id` 稳定复现 |
+| Repository 新增重复 ID | 抛出冲突错误且不覆盖原记录 | `IssueAlreadyExistsError`，原标题保留 | Service 测试与共享 contract test 均稳定复现 |
+| clock 返回无时区时间 | 完整 Schema 拒绝，Repository 不写入 | `ValidationError` 且 `get()` 仍为 `None` | `test_create_does_not_write_when_clock_returns_naive_datetime` 稳定复现 |
 | `show` / `update` / `close` 使用未知 ID | 返回明确业务错误，不改动原数据 | | |
 | JSON 文件不存在 | 按约定初始化为空数据集或给出明确错误 | | |
 | JSON 内容损坏 | 明确报错，不静默覆盖原文件 | | |
@@ -156,6 +178,7 @@ All checks passed!
 
 - [ADR-0002：使用 uv、src 布局与 Pyright](../adr/0002-use-uv-src-layout-and-pyright.md)。
 - [ADR-0003：分离 Issue 的创建、更新与读取 Schema](../adr/0003-separate-issue-input-and-output-schemas.md)。
+- [ADR-0004：Service 依赖 Repository Protocol](../adr/0004-depend-on-repository-protocol.md)。
 
 ## 遇到的问题
 
@@ -168,6 +191,7 @@ All checks passed!
 - Day 1 的 AID-001、AID-002 已完成初步理解验收并移入已解决列表；周日复盘时再做一次无提示复述，验证记忆是否稳定。
 - Day 2 新增 AID-003、AID-004，分别跟踪模型分离与部分更新语义；完成解释和亲手边界测试后再关闭。
 - AID-005 跟踪冻结模型与重新校验边界；三项均未因“批准继续”而自动关闭。
+- Day 3 新增 AID-006、AID-007，跟踪 Protocol/契约测试边界和 UUID/clock 依赖注入。
 
 ## 本周复盘
 

@@ -16,6 +16,8 @@
 | AID-003 | 2026-09-04 | Medium | 为什么创建、部分更新和读取要使用不同 Schema，以及哪些字段必须由系统拥有 | `issues/schemas.py`、ADR-0003 | 能独立解释三个模型的数据方向；指出系统字段为何不能进入创建/普通更新；预测额外字段测试结果 | Open |
 | AID-004 | 2026-09-04 | Medium | `IssueUpdate` 中字段省略、显式 `null` 和空字符串的区别，以及 `model_fields_set` / `exclude_unset` 的作用 | `IssueUpdate` 与对应测试 | 能预测三种输入的结果；由学习者选择一个未覆盖边界并给出预期，再运行新测试并如实记录首次结果，失败时完成 red → green | Open |
 | AID-005 | 2026-09-04 | Medium | `frozen=True` 能防止什么，以及为什么 `model_copy(update=...)` 不能用于校验不可信更新 | `_IssueSchema`、ADR-0003 | 能解释冻结与重新校验的边界；指出后续 Service 应如何安全地产生更新后的完整模型 | Open |
+| AID-006 | 2026-09-08 | Medium | `Protocol` 的结构化类型与继承的区别，以及为什么它只能证明签名、不能证明 Repository 行为 | `repository.py`、Repository contract tests、ADR-0004 | 能解释一个未继承 Protocol 的类为何可被注入；指出 Pyright 与契约测试各自保证什么 | Open |
+| AID-007 | 2026-09-08 | Medium | 为什么 Service 注入 UUID factory 和 clock，以及这与修改全局函数、硬编码测试值的区别 | `service.py`、`test_issue_service.py` | 能说明默认依赖与测试依赖如何切换；预测不注入时测试会出现的不确定性 | Open |
 
 风险等级：`High` / `Medium` / `Low`。
 

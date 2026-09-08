@@ -1,6 +1,7 @@
 # SPEC-0004：Day 3 Issue Service 与 Repository 边界
 
-- 状态：Draft
+- 实现状态：Verified（本地技术检查通过）
+- 理解状态：Pending（AID-006～007 Open）
 - 日期：2026-09-08
 - 对应路线：Week 01 / Day 03
 - 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
@@ -112,14 +113,14 @@ class IssueRepository(Protocol):
 
 ## 验收标准
 
-- [ ] Service 的类型只依赖 `IssueRepository` Protocol，不依赖内存实现。
-- [ ] 创建时 UUID factory 和 clock 各调用一次，两个时间完全相同，状态为 `open`。
-- [ ] 创建成功后 Repository 可以使用相同 ID 查询到该对象。
-- [ ] 查询未知 ID 抛出包含该 ID 的 `IssueNotFoundError`。
-- [ ] 重复 ID 抛出 `IssueAlreadyExistsError`，且原对象不被覆盖。
-- [ ] 无时区 clock 结果被拒绝，失败前没有写入。
-- [ ] 实现中没有 JSON、CLI、FastAPI、数据库或新增依赖。
-- [ ] Service 测试、Ruff、Pyright 与完整 pytest 均通过。
+- [x] Service 的类型只依赖 `IssueRepository` Protocol，不依赖内存实现。
+- [x] 创建时 UUID factory 和 clock 各调用一次，两个时间完全相同，状态为 `open`。
+- [x] 创建成功后 Repository 可以使用相同 ID 查询到该对象。
+- [x] 查询未知 ID 抛出包含该 ID 的 `IssueNotFoundError`。
+- [x] 重复 ID 抛出 `IssueAlreadyExistsError`，且原对象不被覆盖。
+- [x] 无时区 clock 结果被拒绝，失败前没有写入。
+- [x] 实现中没有 JSON、CLI、FastAPI、数据库或新增依赖。
+- [x] Service、Repository contract、Ruff、Pyright 与完整 pytest 均通过。
 - [ ] 学习者能解释 Schema、Service、Repository 的职责及依赖注入的目的。
 
 ## 测试计划
@@ -132,6 +133,7 @@ class IssueRepository(Protocol):
 | 查询未知 Issue | 类型化错误包含目标 UUID |
 | 重复 ID | 抛出冲突错误，原记录保持不变 |
 | 无时区 clock | 完整模型校验失败，Repository 中没有记录 |
+| Repository 契约 | 每个 adapter 都运行相同的 add/get、未知 ID、重复 ID 不覆盖测试 |
 | 结构化替换 | 一个不继承 Protocol 的 recording fake 可传入 Service 并通过 Pyright |
 
 ## 需要本人理解的内容
@@ -141,7 +143,19 @@ class IssueRepository(Protocol):
 3. 为什么 UUID 和时间要注入，而不是在测试中修改全局函数？
 4. Repository 返回 `None`，为什么由 Service 决定它代表“业务上未找到”？
 5. 为什么 Repository 接收完整 `IssueRead`，而不是未完成的 `IssueCreate`？
-6. 为什么 `IssueRead.model_validate()` 是构造完整状态的边界，而 `model_copy(update=...)` 不是？
+6. 为什么通过 `IssueRead(...)` 构造器或 `model_validate()` 重新验证完整状态，而不能把 `model_copy(update=...)` 当作校验入口？
+
+## 代码导读
+
+| 概念 | 在本实现中的作用 |
+|---|---|
+| `Protocol` | 描述 Service 需要的 `add/get` 方法；实现类不必继承它 |
+| 结构化类型 | “方法形状兼容即可”；由 Pyright 检查，Python 运行时不会自动执行类型注解 |
+| adapter | `InMemoryIssueRepository` 把端口映射到字典；未来 JSON 是另一个实现 |
+| dependency injection | 构造 Service 时传入 Repository、UUID factory 和 clock，而不是在方法内部固定创建 |
+| fake | `RecordingRepository` 是有简单行为的测试替身，用来观察 Service 如何调用端口 |
+| contract test | 对每个 adapter 执行相同行为测试，补足 Protocol 无法证明的冲突/缺失语义 |
+| 类型化错误 | 错误类型与目标 UUID 一起表达稳定失败，不依赖解析英文字符串 |
 
 ## AI 实现边界
 
@@ -149,11 +163,13 @@ AI 可以实现 Protocol、内存适配器、Service、类型化错误和测试�
 
 ## 实现与验证证据
 
-- 首次失败测试：待记录。
-- Service/Repository 测试：待记录。
-- Ruff：待记录。
-- Pyright：待记录。
-- 完整 pytest：待记录。
+- 首次失败测试：测试先运行，因 `InMemoryIssueRepository` 尚不存在而产生预期 ImportError。
+- Service 测试：`uv run pytest -q tests/test_issue_service.py` → 6 passed。
+- Repository contract tests：3 passed；当前运行 `in-memory` adapter，Day 4 加入 JSON adapter。
+- Ruff format：11 files already formatted。
+- Ruff lint：All checks passed。
+- Pyright：0 errors，0 warnings。
+- 完整 pytest：37 passed。
 - 实现提交：待记录。
 - 理解验收：待完成。
 
