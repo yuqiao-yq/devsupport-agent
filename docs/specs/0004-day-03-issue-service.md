@@ -5,7 +5,7 @@
 - 日期：2026-09-08
 - 对应路线：Week 01 / Day 03
 - 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
-- 对应 PR：待创建
+- 对应 PR：[#4](https://github.com/yuqiao-yq/devsupport-agent/pull/4)
 
 ## 目标
 
@@ -170,7 +170,7 @@ AI 可以实现 Protocol、内存适配器、Service、类型化错误和测试�
 - Ruff lint：All checks passed。
 - Pyright：0 errors，0 warnings。
 - 完整 pytest：37 passed。
-- 实现提交：待记录。
+- 实现提交：[`a89e79d`](https://github.com/yuqiao-yq/devsupport-agent/commit/a89e79d)。
 - 理解验收：待完成。
 
 ## 参考资料

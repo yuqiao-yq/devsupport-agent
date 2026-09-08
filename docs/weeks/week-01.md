@@ -3,7 +3,7 @@
 - 周期：2026-09-04 ～ 进行中
 - 状态：进行中（Day 1～2 已合并；Day 3 技术实现完成，待理解验收）
 - 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
-- 对应 PR：Day 1 [#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2)；Day 2 [#3](https://github.com/yuqiao-yq/devsupport-agent/pull/3)；Day 3 待创建
+- 对应 PR：Day 1 [#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2)；Day 2 [#3](https://github.com/yuqiao-yq/devsupport-agent/pull/3)；Day 3 [#4](https://github.com/yuqiao-yq/devsupport-agent/pull/4)
 
 ## 本周目标
 
@@ -30,7 +30,7 @@
 |---|---|---|---|
 | Python 工程初始化 | 已完成 | `uv sync --locked` + 全部 Day 1 检查 | [`cb5ce97`](https://github.com/yuqiao-yq/devsupport-agent/commit/cb5ce97) / [#2](https://github.com/yuqiao-yq/devsupport-agent/pull/2) |
 | Pydantic Issue Schemas | 实现已完成，理解债务开放 | 27 条 Schema 测试 + 完整质量检查 | [`6c9c2ca`](https://github.com/yuqiao-yq/devsupport-agent/commit/6c9c2ca) / [#3](https://github.com/yuqiao-yq/devsupport-agent/pull/3) |
-| Service/Repository 分层 | 已实现 create/get，待理解验收 | 6 条 Service + 3 条 Repository contract tests | [SPEC-0004](../specs/0004-day-03-issue-service.md) |
+| Service/Repository 分层 | 已实现 create/get，待理解验收 | 6 条 Service + 3 条 Repository contract tests | [`a89e79d`](https://github.com/yuqiao-yq/devsupport-agent/commit/a89e79d) / [#4](https://github.com/yuqiao-yq/devsupport-agent/pull/4) |
 | JSON 持久化 | 未开始 | 临时文件测试与重启验证 | |
 | `create` / `list` / `show` | 未开始 | CLI 测试 | |
 | `update` / `close` | 未开始 | CLI 测试 | |
