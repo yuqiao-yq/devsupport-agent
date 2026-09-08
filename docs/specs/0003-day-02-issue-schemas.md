@@ -1,6 +1,7 @@
 # SPEC-0003：Day 2 Issue 数据契约
 
-- 状态：Implementation Verified（本地技术验收完成；理解验收待 Week 01 复盘）
+- 实现状态：Verified（本地技术检查通过；PR #3 待合并）
+- 理解状态：Pending（AID-003～005 Open，待 Week 01 复盘）
 - 日期：2026-09-04
 - 对应路线：Week 01 / Day 02
 - 对应 Issue：[#1](https://github.com/yuqiao-yq/devsupport-agent/issues/1)
@@ -89,7 +90,6 @@
 - [x] `model_dump(mode="json")` 生成标准库可以编码的数据。
 - [x] Schema 单元测试、Ruff、Pyright 与完整 pytest 均通过。
 - [ ] 学习者能解释输入/输出模型分离、运行时校验和静态类型检查的区别。
-- [x] 学习者已审阅逐题解释，并于 2026-09-08 明确批准提交和继续推进；尚未独立复述的内容保留在 AI Debt。
 
 ## 测试计划
 

@@ -120,7 +120,7 @@ Python 3.12.14
 backend/src/devsupport_agent/__init__.py
 
 # uv run ruff format --check .
-3 files already formatted
+6 files already formatted
 
 # uv run ruff check .
 All checks passed!
@@ -145,7 +145,7 @@ All checks passed!
 | 场景 | 预期行为 | 首次结果 | 修复或结论 |
 |---|---|---|---|
 | 创建时标题为空、只有空白或超过 200 字符 | Pydantic 拒绝输入 | 三类输入均按预期失败 | `test_issue_create_rejects_invalid_title` 稳定复现 |
-| 更新没有字段或显式传入 `null` | Pydantic 拒绝输入 | 四类输入均按预期失败 | `test_issue_update_rejects_empty_or_null_changes` 稳定复现 |
+| 更新没有字段或显式传入 `null` | Pydantic 拒绝输入 | 空更新以及单独/混合 `null` 均按预期失败 | `test_issue_update_rejects_empty_or_null_changes` 稳定复现 |
 | 创建/更新尝试写入系统字段 | Pydantic 拒绝额外字段 | `status` 被拒绝 | create/update 两个测试稳定复现 |
 | 读取时间传入无时区字符串或 Unix 数字时间戳 | Pydantic 拒绝隐式或含糊时间 | 两类输入均按预期失败 | `test_issue_read_rejects_invalid_system_fields` 稳定复现 |
 | `show` / `update` / `close` 使用未知 ID | 返回明确业务错误，不改动原数据 | | |
